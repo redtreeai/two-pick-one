@@ -23,6 +23,10 @@ gamedata.last_type = 0
 gamedata.error_point = 0
 --上次错误时间点纪录，仅提示一秒
 gamedata.last_error_time = 0
+--吃子位置群
+gamedata.destroy_point_list = {}
+--吃子时间点纪录，仅提示一秒
+gamedata.destroy_time = 0
 --实时棋盘数据
 gamedata.PAN_RUN = {
 

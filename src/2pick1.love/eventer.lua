@@ -39,7 +39,7 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
             love_engine.event.quit()
         end
         if basedata.SCENE_CODE.TITLE.is_on_start and is_left_click then
-            --重新开始游戏,初始化数据
+            --开始游戏,进入游戏场景
             loader.SCENE_STATUS.cur_scene=basedata.SCENE_CODE.GAME.code
         end
     end
@@ -63,8 +63,18 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
         end
         if basedata.SCENE_CODE.GAME.is_on_restart and is_left_click then
             --重新开始游戏,初始化数据
-            gamedata.PAN_RUN = basedata.PAN_INIT
+            gamedata.PAN_RUN = {1,1,1,1,1,1,1,1,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0}
         end
+
+        --棋盘落子坐标的动态定位
+        cn = 0
+        for i=1,24 do
+            if basedata.PAN_XPOINT[i]-45 <cur_mouse_x and cur_mouse_x <basedata.PAN_XPOINT[i]+45 and basedata.PAN_YPOINT[i]-45<cur_mouse_y and cur_mouse_y < basedata.PAN_YPOINT[i]+45 then
+                cn = i
+                break
+            end
+        end
+        gamedata.now_mpoint=cn
 
         --如果在执子过程中，则锁定棋子
         if gamedata.is_keepchess == true then
@@ -75,21 +85,67 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
                 gamedata.last_point =0
                 gamedata.last_type =0
             end
-        else
-            --如果在选子过程中，则动态选子
-            cn = 0
-            for i=1,24 do
-                if basedata.PAN_XPOINT[i]-45 <cur_mouse_x and cur_mouse_x <basedata.PAN_XPOINT[i]+45 and basedata.PAN_YPOINT[i]-45<cur_mouse_y and cur_mouse_y < basedata.PAN_YPOINT[i]+45 then
-                    cn = i
-                    break
+            --如未取消，准备判断落子状态 (1、 为棋盘24落子点之一  2、为直线上的点 3目标点无被占位 4非原点)
+            if gamedata.now_mpoint ~= 0 and is_left_click==true and gamedata.PAN_RUN[gamedata.now_mpoint] == 0 and gamedata.now_mpoint~=gamedata.last_point then
+                cr = basedata.ROUTE[gamedata.last_point]
+                if math_tool.IsInTable(gamedata.now_mpoint,cr)==true and gamedata.PAN_RUN[gamedata.now_mpoint] ==0 then
+                    --可行动则落子
+                    gamedata.is_keepchess=false
+                    gamedata.PAN_RUN[gamedata.now_mpoint] =gamedata.last_type
+                    gamedata.last_point =0
+                    gamedata.last_type =0
+                    --落子后要结算结果
+                    dlist = {}
+                    for sb=1,24 do
+                        --根据规则结算
+                        cr = basedata.ROUTE[sb]
+                        crl = math_tool.table_leng(cr)
+                        if gamedata.PAN_RUN[sb]==1 and gamedata.turn==2 then
+                            for a=1,crl do
+                                if math.fmod( a, 2)==1 and gamedata.PAN_RUN[cr[a]]==2 and gamedata.PAN_RUN[cr[a+1]]==2 then
+                                   table.insert(dlist,sb)
+                                end
+                            end
+                        end
+                        if gamedata.PAN_RUN[sb]==2 and gamedata.turn==1 then
+                            for a=1,crl do
+                                if math.fmod( a, 2)==1 and gamedata.PAN_RUN[cr[a]]==1 and gamedata.PAN_RUN[cr[a+1]]==1 then
+                                    table.insert(dlist,sb)
+                                end
+                            end
+                        end
+                    end
+                    --判断是否有吃子行为
+                    if math_tool.table_leng(dlist) ==0 then
+                        --donothing
+                    else
+                        dlistl = math_tool.table_leng(dlist)
+                        --清除吃子位
+                        for xb=1,dlistl do
+                            gamedata.PAN_RUN[dlist[xb]]=0
+                        end
+                        gamedata.destroy_point_list = dlist
+                        gamedata.destroy_time =game_timer
+                    end
+
+                    --落子成功且结算成功后交换轮次
+                    if gamedata.turn==1 then
+                        gamedata.turn=2
+                    elseif gamedata.turn==2 then
+                        gamedata.turn=1
+                    end
+
+                else
+                    --不可落子则进行错误提示
+                    gamedata.error_point =gamedata.now_mpoint
+                    gamedata.last_error_time=game_timer
                 end
             end
-            gamedata.now_mpoint=cn
+        else
             --获取位置
             if gamedata.now_mpoint ~= 0 and gamedata.is_keepchess==false and is_left_click==true and gamedata.PAN_RUN[gamedata.now_mpoint] ~= 0 then
 
                 act_flag = false
-                --绘制落子提示
                 cr = basedata.ROUTE[gamedata.now_mpoint]
                 crl = math_tool.table_leng(cr)
                 --确认当前子是否可行动
@@ -99,6 +155,13 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
                         break
                     end
                 end
+                --确认是否是当前玩家的棋子
+                if gamedata.PAN_RUN[gamedata.now_mpoint]==gamedata.turn then
+                    --donothing
+                else
+                    act_flag=false
+                end
+
                 --可行动则提子
                 if act_flag==true then
                     gamedata.is_keepchess=true
@@ -115,6 +178,11 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
             --清空错误状态
             if game_timer-gamedata.last_error_time>1 then
                 gamedata.error_point = 0
+            end
+
+            --清空吃子爆炸状态
+            if game_timer-gamedata.destroy_time>1 then
+                gamedata.destroy_point_list = {}
             end
         end
     end

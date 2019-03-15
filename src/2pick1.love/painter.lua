@@ -110,6 +110,13 @@ function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
         if gamedata.error_point ~=0 then
             love_engine.graphics.draw(loader.RESOURCE.error_img,basedata.PAN_XPOINT[gamedata.error_point]-45,basedata.PAN_YPOINT[gamedata.error_point]-45)
         end
+
+        --如果有棋子被吃，则引爆
+        if math_tool.table_leng(gamedata.destroy_point_list) ~=0 then
+            for b=1,math_tool.table_leng(gamedata.destroy_point_list) do
+                love_engine.graphics.draw(loader.RESOURCE.fire_img,basedata.PAN_XPOINT[gamedata.destroy_point_list[b]]-45,basedata.PAN_YPOINT[gamedata.destroy_point_list[b]]-45)
+            end
+        end
     end
 end
 
