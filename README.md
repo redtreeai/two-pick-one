@@ -24,6 +24,8 @@ The rules of the game are simple:
 
 4. The winner is the one who wipes out the other party to one son or less.
 
-![]show1.png
-![]show2.png
-![]show3.png
+![](show1.png)
+
+![](show2.png)
+
+![](show3.png)
