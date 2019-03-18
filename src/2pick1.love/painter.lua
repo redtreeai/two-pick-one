@@ -44,6 +44,10 @@ function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
         love_engine.graphics.line(600, 630, 360, 870)
         love_engine.graphics.line(360, 510, 600, 510)
         --根据数组绘制棋子
+        --如果移动到help上,则显示help
+        if basedata.SCENE_CODE.TITLE.is_on_help == true then
+            love_engine.graphics.draw(loader.RESOURCE.rules_img,300,150)
+        end
     end
 
     --绘制开始游戏界面
@@ -130,6 +134,11 @@ function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
                 love_engine.graphics.draw(loader.RESOURCE.p2win_img,360,90)
             end
             love_engine.audio.play(loader.RESOURCE.win_m)
+        end
+
+        --如果移动到help上,则显示help
+        if basedata.SCENE_CODE.GAME.is_on_help == true then
+            love_engine.graphics.draw(loader.RESOURCE.rules_img,300,150)
         end
     end
 end

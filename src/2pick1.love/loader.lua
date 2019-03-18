@@ -23,7 +23,8 @@ loader.RESOURCE = {
     error_img = love_engine.graphics.newImage("resource/uis/error.png"),
     fire_img = love_engine.graphics.newImage("resource/uis/fire.png"),
     p1win_img = love_engine.graphics.newImage("resource/uis/p1win.jpg"),
-    p2win_img = love_engine.graphics.newImage("resource/uis/p2win.jpg")
+    p2win_img = love_engine.graphics.newImage("resource/uis/p2win.jpg"),
+    rules_img = love_engine.graphics.newImage("resource/uis/rules.jpg")
 }
 --初始场景
 loader.SCENE_STATUS = {

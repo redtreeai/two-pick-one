@@ -139,7 +139,7 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
                     end
                     --判断是否有吃子行为
                     if math_tool.table_leng(dlist) ==0 then
-                        --donothing
+                        --do nothing
                     else
                         dlistl = math_tool.table_leng(dlist)
                         --清除吃子位
