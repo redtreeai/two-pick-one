@@ -64,6 +64,28 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
         if basedata.SCENE_CODE.GAME.is_on_restart and is_left_click then
             --重新开始游戏,初始化数据
             gamedata.PAN_RUN = {1,1,1,1,1,1,1,1,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0}
+            --获胜者 0平局 1玩家1 2玩家2
+            gamedata.winner = 0
+            --轮次
+            gamedata.turn = 1
+            --是否执子
+            gamedata.is_keepchess = false
+            --当前鼠标子位
+            gamedata.now_mpoint = 0
+            --当前执子的原始位置
+            gamedata.last_point = 0
+            --当前执子
+            gamedata.last_type = 0
+            --错误执子位置
+            gamedata.error_point = 0
+            --上次错误时间点纪录，仅提示一秒
+            gamedata.last_error_time = 0
+            --吃子位置群
+            gamedata.destroy_point_list = {}
+            --吃子时间点纪录，仅提示一秒
+            gamedata.destroy_time = 0
+            --gameover
+            basedata.SCENE_CODE.GAME.is_gameover=false
         end
 
         --棋盘落子坐标的动态定位
@@ -103,7 +125,7 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
                         if gamedata.PAN_RUN[sb]==1 and gamedata.turn==2 then
                             for a=1,crl do
                                 if math.fmod( a, 2)==1 and gamedata.PAN_RUN[cr[a]]==2 and gamedata.PAN_RUN[cr[a+1]]==2 then
-                                   table.insert(dlist,sb)
+                                    table.insert(dlist,sb)
                                 end
                             end
                         end
@@ -183,6 +205,24 @@ function eventer.dojob(cur_scene,cur_mouse_x,cur_mouse_y,is_left_click,is_right_
             --清空吃子爆炸状态
             if game_timer-gamedata.destroy_time>1 then
                 gamedata.destroy_point_list = {}
+            end
+
+            --判断输赢
+            cta = 0
+            ctb = 0
+            for w =1,24 do
+                if gamedata.PAN_RUN[w] ==1 then
+                    cta = cta+1
+                elseif gamedata.PAN_RUN[w] ==2 then
+                    ctb = ctb+1
+                end
+            end
+            if cta <2 then
+                basedata.SCENE_CODE.GAME.is_gameover=true
+                gamedata.winner=2
+            elseif ctb <2 then
+                basedata.SCENE_CODE.GAME.is_gameover=true
+                gamedata.winner=1
             end
         end
     end

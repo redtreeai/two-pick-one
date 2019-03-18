@@ -10,13 +10,20 @@ require('core.love_engine')
 loader = {}
 --静态资源
 loader.RESOURCE = {
-    --title_m = love_engine.audio.newSource("resource/media/title.mp3", "stream"),
-    p1_img = love_engine.graphics.newImage("resource/uis/p1.png"),
+    --音频媒体素材
+    bgm_m = love_engine.audio.newSource("resource/media/bgm.mp3", "stream"),
+    bomb_m = love_engine.audio.newSource("resource/media/bomb.mp3", "stream"),
+    jump_m = love_engine.audio.newSource("resource/media/jump.mp3", "stream"),
+    win_m = love_engine.audio.newSource("resource/media/win.mp3", "stream"),
+    error_m = love_engine.audio.newSource("resource/media/error.mp3", "stream"),
+    --图片素材
+    p1_img= love_engine.graphics.newImage("resource/uis/p1.png"),
     p2_img = love_engine.graphics.newImage("resource/uis/p2.png"),
     togo_img = love_engine.graphics.newImage("resource/uis/togo.png"),
     error_img = love_engine.graphics.newImage("resource/uis/error.png"),
-    fire_img = love_engine.graphics.newImage("resource/uis/fire.png")
-
+    fire_img = love_engine.graphics.newImage("resource/uis/fire.png"),
+    p1win_img = love_engine.graphics.newImage("resource/uis/p1win.jpg"),
+    p2win_img = love_engine.graphics.newImage("resource/uis/p2win.jpg")
 }
 --初始场景
 loader.SCENE_STATUS = {

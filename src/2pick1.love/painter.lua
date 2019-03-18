@@ -12,9 +12,10 @@ painter = {}
 function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
     --绘制前设置字体
     love_engine.graphics.setFont(loader.FONT_TYPE.MSYH34)
-
+    love_engine.audio.play(loader.RESOURCE.bgm_m)
     --绘制游戏标题页面
     if cur_scene == basedata.SCENE_CODE.TITLE.code then
+        --播放音乐
         --绘制按钮
         love_engine.graphics.print('start',800,20)
         love_engine.graphics.print('help',1000,20)
@@ -90,6 +91,7 @@ function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
 
         --执子过程中
         if gamedata.is_keepchess==true and gamedata.last_point~=0 then
+            love_engine.audio.play(loader.RESOURCE.jump_m)
             if gamedata.last_type==1 then
                 love_engine.graphics.draw(loader.RESOURCE.p1_img,cur_mouse_x-45,cur_mouse_y-45)
             elseif gamedata.last_type==2 then
@@ -109,6 +111,7 @@ function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
         --如果有错误执子行为，则提示
         if gamedata.error_point ~=0 then
             love_engine.graphics.draw(loader.RESOURCE.error_img,basedata.PAN_XPOINT[gamedata.error_point]-45,basedata.PAN_YPOINT[gamedata.error_point]-45)
+            love_engine.audio.play(loader.RESOURCE.error_m)
         end
 
         --如果有棋子被吃，则引爆
@@ -116,6 +119,17 @@ function painter.dojob(cur_scene,cur_mouse_x,cur_mouse_y,game_timer)
             for b=1,math_tool.table_leng(gamedata.destroy_point_list) do
                 love_engine.graphics.draw(loader.RESOURCE.fire_img,basedata.PAN_XPOINT[gamedata.destroy_point_list[b]]-45,basedata.PAN_YPOINT[gamedata.destroy_point_list[b]]-45)
             end
+            love_engine.audio.play(loader.RESOURCE.bomb_m)
+        end
+
+        --如果分出胜负
+        if basedata.SCENE_CODE.GAME.is_gameover==true then
+            if gamedata.winner==1 then
+                love_engine.graphics.draw(loader.RESOURCE.p1win_img,360,90)
+            elseif gamedata.winner==2 then
+                love_engine.graphics.draw(loader.RESOURCE.p2win_img,360,90)
+            end
+            love_engine.audio.play(loader.RESOURCE.win_m)
         end
     end
 end

@@ -28,7 +28,7 @@ basedata.SCENE_CODE = {
         is_on_exit =false,
         --鼠标是否位于帮助
         is_on_help=false
-    }
+    },
 }
 
 basedata.PAN_INIT = {1,1,1,1,1,1,1,1,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0}
